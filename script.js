@@ -50,6 +50,15 @@ class DeckOfCards {
     drawCards(numCards, player1, player2, round){
         console.log("Round: " + round)
         console.log(player1.name + ": " + player1.deck.length + "     " + player2.name + ": " + player2.deck.length)
+
+        //printing top card of each DECK
+        /*
+        let topCard = player1.deck[player1.deck.length - 1]
+        console.log(player1.name + "'s open card is " + topCard.printSingleCard())
+        topCard = player2.deck[player2.deck.length - 1]
+        console.log(player2.name + "'s open card is " + topCard.printSingleCard())
+        */
+
         for(let i=0; i < numCards; i++){
             //draw the top card from player 1's deck
             player1.cardsOnTable[i] = player1.deck.pop();
@@ -82,17 +91,20 @@ class DeckOfCards {
         if (score1 > score2){
             console.log(player1.name + " is the winner. Winning card's score is "+ score1)   
             player1.isWinner = true
-            player2.isWinner = false
+            player2.isWinner = false   
+            return true   
             
         } else if (score2 > score1){
             console.log(player2.name + " is the winner. Winning card's score is "+ score2)
             player2.isWinner = true
             player1.isWinner = false
+            return true
             
         } else if (score1 === score2){
             console.log("Both player's chose cards with same score! War begins!")
             player1.isWinner = false
             player2.isWinner = false
+            return false
             
         }
     }
@@ -107,7 +119,9 @@ class DeckOfCards {
             player1.addCardsToDeck(collectCards)
         } else {
             player2.addCardsToDeck(collectCards)
-        }
+        }    
+    
+
     }
 
 }
@@ -133,7 +147,6 @@ class Player {
     }
 
     addCardsToDeck(collectCards){
-
         for(let i=0; i< collectCards.length; i++){
             this.deck.unshift(collectCards[i])
         }
@@ -177,7 +190,7 @@ class shuffleHelper {
 class Game {
     constructor(){
         this.round = 1
-        this. gameState = ""
+        this.status = "normal"
     }
 
     play(){
@@ -191,18 +204,40 @@ class Game {
 
         deckOfCards.dealOut(player1, player2)
 
-        // while(player1.deck.length !== 0 && player2.deck.length !== 0){
-            while(this.round < 2){
-                
+        while(player1.deck.length !== 0 && player2.deck.length !== 0){
+
+            while(this.status == "normal"){
                 deckOfCards.drawCards(1,player1, player2, this.round)
                 deckOfCards.flipCards(player1, player2)
-                deckOfCards.compareCards(player1, player2)
-                deckOfCards.winnerCollectsCards(player1, player2)
-                player1.printDeck()
-                player2.printDeck()
+                if(deckOfCards.compareCards(player1, player2)){
+                    this.status = "normal"
+                    deckOfCards.winnerCollectsCards(player1, player2)    
+                }               
+                else {
+                    this.status = "war"
+                }       
+            
                 this.round = this.round + 1
 
-            }        
+            } 
+
+            while(this.status === "war"){
+                deckOfCards.drawCards(4,player1, player2, this.round)
+                deckOfCards.flipCards(player1, player2)
+
+                if(deckOfCards.compareCards(player1, player2)){
+                    this.status = "normal"
+                    deckOfCards.winnerCollectsCards(player1, player2)    
+                }               
+                else {
+                    this.status = "war"
+                }       
+            
+                this.round = this.round + 1
+            }
+
+
+        }           
     }
 }
 
