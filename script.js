@@ -43,8 +43,17 @@ class DeckOfCards {
         console.log(this.deck)
     }
 
-    drawCards(){
+    drawCards(numCards, player1, player2){
+        for(i=0; i < numCards; i++){
+            //draw the top card from player 1's deck
+            player1.cardsOnTable[i] = player1.deck.pop();
+            //draw the top card from player 2's deck
+            player2.cardsOnTable[i] = player2.deck.pop();
+        }
+    }
 
+    compareCards(player1, player2){
+        player1.cardsOnTable[i]
     }
 }
 
@@ -52,7 +61,8 @@ class Player {
     constructor(name){
         this.name =  name
         this.deck = []
-        this.cardsOnTable = []  
+        this.cardsOnTable = []    
+           
     }
 }
 
@@ -97,6 +107,8 @@ let player1 = new Player("Mickey")
 let player2 = new Player("Minnie")
 
 deckOfCards.sliceDeck(player1, player2)
+deckOfCards.drawCards(player1, player2)
+deckOfCards.compareCards(player1, player2)
 
 
 
