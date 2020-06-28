@@ -49,6 +49,7 @@ class DeckOfCards {
 
     drawCards(numCards, player1, player2, round){
         console.log("Round: " + round)
+        console.log(player1.name + ": " + player1.deck.length + "     " + player2.name + ": " + player2.deck.length)
         for(let i=0; i < numCards; i++){
             //draw the top card from player 1's deck
             player1.cardsOnTable[i] = player1.deck.pop();
@@ -82,12 +83,12 @@ class DeckOfCards {
             console.log(player1.name + " is the winner. Winning card's score is "+ score1)   
             player1.isWinner = true
             player2.isWinner = false
-            this.winnerCollectsCard(player1)
+            
         } else if (score2 > score1){
             console.log(player2.name + " is the winner. Winning card's score is "+ score2)
             player2.isWinner = true
             player1.isWinner = false
-            this.winnerCollectsCard(player2)
+            
         } else if (score1 === score2){
             console.log("Both player's chose cards with same score! War begins!")
             player1.isWinner = false
@@ -96,20 +97,19 @@ class DeckOfCards {
         }
     }
 
-    winnerCollectsCard(player1, player2){
+    winnerCollectsCards(player1, player2){
 
         let collectCards = player1.cardsOnTable.concat(player2.cardsOnTable)
-            
-        if(player1.isWinner) { //player1 collects all drawn cards
-            player1.deck.unshift(collectCards)
+        console.log("number of cards pulled out:" + collectCards.length)
+        console.log(collectCards)
+                 
+        if(player1.isWinner) { 
+            player1.addCardsToDeck(collectCards)
         } else {
-            player2.deck.unshift(collectCards)
+            player2.addCardsToDeck(collectCards)
         }
-
-        player1.clearCardsOnTable()
-        player2.clearCardsOnTable()
-
     }
+
 }
 
 class Player {
@@ -122,9 +122,24 @@ class Player {
     }
 
     clearCardsOnTable(){
-        for(let i=0; i< cardsOntable.length; i++){
-            cardsOnTable.pop()
+        for(let i=0; i< this.cardsOnTable.length; i++){
+            this.cardsOnTable.pop()
         }
+    }
+
+    printDeck(){
+        console.log(this.name + " has " + this.deck.length + " cards in deck" )
+        console.log(this.deck)
+    }
+
+    addCardsToDeck(collectCards){
+
+        for(let i=0; i< collectCards.length; i++){
+            this.deck.unshift(collectCards[i])
+        }
+
+        this.clearCardsOnTable()
+           
     }
 }
 
@@ -177,17 +192,17 @@ class Game {
         deckOfCards.dealOut(player1, player2)
 
         // while(player1.deck.length !== 0 && player2.deck.length !== 0){
-            while(this.round < 10){
+            while(this.round < 2){
                 
                 deckOfCards.drawCards(1,player1, player2, this.round)
                 deckOfCards.flipCards(player1, player2)
                 deckOfCards.compareCards(player1, player2)
-                deckOfCards.winnerCollectsCard(player1, player2)
+                deckOfCards.winnerCollectsCards(player1, player2)
+                player1.printDeck()
+                player2.printDeck()
                 this.round = this.round + 1
 
-            }
-
-        //}         
+            }        
     }
 }
 
