@@ -246,20 +246,19 @@ class Game {
             while(this.status == "normal"){
                 //console.log("************" + player1.deck.length + player2.deck.length)
                 //if(player1.deck.length !== 0 || player2.deck.length !== 0) {
-                    console.log("calling draw cards1")
+                    //console.log("calling draw cards1")
                     deckOfCards.drawCards(1,player1, player2, this.round)
-                    console.log("calling flip cards 1")
+                    //console.log("calling flip cards 1")
                     deckOfCards.flipCards(player1, player2)
                         
                     if(deckOfCards.compareCards(player1, player2)){
                         deckOfCards.winnerCollectsCards(player1, player2, this.status)    
                         this.status = "normal"
-                    
                     }               
                     else {
                         this.status = "war"
                         deckOfCards.winnerCollectsCards(player1, player2, this.status) 
-                                                
+                                            
                     }       
                         
                     this.round = this.round + 1     
