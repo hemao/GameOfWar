@@ -50,8 +50,7 @@ class DeckOfCards {
 
     drawCards(numCards, player1, player2, round){
         console.log("Round: " + round)
-        //console.log("Deck length before popping cards out")
-        console.log(player1.name + ": " + player1.deck.length + "     " + player2.name + ": " + player2.deck.length)
+        console.log("Cards in player's deck - " + player1.name + ": " + player1.deck.length + "     " + player2.name + ": " + player2.deck.length)
 
         
         for(let i=0; i < numCards; i++){
@@ -61,12 +60,12 @@ class DeckOfCards {
             player2.cardsOnTable[i] = player2.deck.pop();
         }
        
-       //console.log(player1.name + ": " + player1.deck.length + "     " + player2.name + ": " + player2.deck.length)
     }
 
     flipCards(player1, player2){
+        console.log("Players reveal top card!")
         let displayCard = player1.cardsOnTable[player1.cardsOnTable.length-1];
-         console.log(player1.name + "'s open card is " + displayCard.printSingleCard())
+        console.log(player1.name + "'s open card is " + displayCard.printSingleCard())
 
         displayCard = player2.cardsOnTable[player2.cardsOnTable.length-1];
         console.log(player2.name + "'s open card is " + displayCard.printSingleCard())
@@ -75,12 +74,6 @@ class DeckOfCards {
     compareCards(player1, player2){
 
         let openCardIndex = player1.cardsOnTable.length - 1
-
-        /*
-        console.log("IN COMPARE CARDS " + openCardIndex)
-        console.log(player1.name + " - " + player1.cardsOnTable.length)
-        console.log(player2.name + " - " + player2.cardsOnTable.length)
-        */
 
         let score1 = player1.cardsOnTable[openCardIndex].score //player1's open card score
         let score2 = player2.cardsOnTable[openCardIndex].score //player2's open card score
@@ -111,16 +104,9 @@ class DeckOfCards {
     winnerCollectsCards(player1, player2, gameStatus){
 
         let collectCards = player1.cardsOnTable.concat(player2.cardsOnTable)
-        /*
-        console.log("In collecting cards routine - number of cards pulled out:" + collectCards.length)
-        console.log(collectCards)
-        console.log("in collecting cards routine - " + gameStatus)
-        */
-
+        
         if(gameStatus === "war"){
-            //console.log("adding the cards to warpile: ")
             this.warPile = collectCards.concat(this.warPile)
-            //console.log(this.warPile)
             player1.cardsOnTable = []
             player2.cardsOnTable = []
         }
@@ -128,29 +114,17 @@ class DeckOfCards {
         if(player1.isWinner && gameStatus == "normal") { 
             player1.addCardsToDeck(collectCards) 
             player1.cardsOnTable = []
-            /*
-            console.log("if 1");
-            console.log("cards added to " + player1.name + " deck. cardsOntable length = " + player1.cardsOnTable.length)
-            console.log(player1.name + "   " + player1.deck.length) */
         } else if(player2.isWinner && gameStatus == "normal"){
             player2.addCardsToDeck(collectCards)
             player2.cardsOnTable = []
-            /*
-            console.log("cards added to " + player2.name + " deck. cardsOntable length = " + player2.cardsOnTable.length)
-            console.log(player2.name + "   " + player2.deck.length) */
         } else if(player1.isWinner && gameStatus == "war"){
             player1.addCardsToDeck(this.warPile) 
             player1.cardsOnTable = []
             this.warPile = []
-            /*
-            console.log("cards added to " + player1.name + " deck. cardsOntable length = " + player1.cardsOnTable.length)
-            console.log(player1.name + "   " + player1.deck.length) */
         } else if(player2.isWinner && gameStatus == "war"){
             player2.addCardsToDeck(this.warPile)
             player2.cardsOnTable = []
             this.warPile = []
-            /* console.log("cards added to " + player2.name + " deck. cardsOntable length = " + player2.cardsOnTable.length)
-            console.log(player2.name + "   " + player2.deck.length) */
         }
 
         collectCards = []
@@ -175,20 +149,15 @@ class Player {
     }
 
     printDeck(){
-        //console.log(this.name + " has " + this.deck.length + " cards in deck" )
         console.log(this.deck)
     }
 
     addCardsToDeck(collectCards){
-        //console.log("before collecting cards")
-        //this.printDeck()
+        console.log(collectCards.length)
         for(let i=0; i< collectCards.length; i++){
             this.deck.unshift(collectCards[i])
         }
-        //console.log(this.name)
-        //this.printDeck()
-        this.clearCardsOnTable()
-           
+        this.clearCardsOnTable()       
     }
 }
 
@@ -239,55 +208,67 @@ class Game {
         let player2 = new Player("Minnie")
 
         deckOfCards.dealOut(player1, player2)
-
+        
     outer_block: {
-        while(player1.deck.length !== 0 && player2.deck.length !== 0 && this.status !== "GAME OVER"){
-
-            while(this.status == "normal"){
-                //console.log("************" + player1.deck.length + player2.deck.length)
-                //if(player1.deck.length !== 0 || player2.deck.length !== 0) {
-                    //console.log("calling draw cards1")
-                    deckOfCards.drawCards(1,player1, player2, this.round)
-                    //console.log("calling flip cards 1")
-                    deckOfCards.flipCards(player1, player2)
+        while(player1.deck.length > 0 && player2.deck.length > 0 && this.status !== "GAME OVER"){
+            while(this.status == "normal"){               
+                    if (player1.deck.length >= 1 && player2.deck.length >=1){
+                        deckOfCards.drawCards(1,player1, player2, this.round)
+                        deckOfCards.flipCards(player1, player2)
                         
-                    if(deckOfCards.compareCards(player1, player2)){
-                        deckOfCards.winnerCollectsCards(player1, player2, this.status)    
-                        this.status = "normal"
-                    }               
-                    else {
-                        this.status = "war"
-                        deckOfCards.winnerCollectsCards(player1, player2, this.status) 
-                                            
-                    }       
-                        
-                    this.round = this.round + 1     
-               // } else {
-                    //this.status = "GAME OVER"
-               // }       
-
+                        if(deckOfCards.compareCards(player1, player2)){
+                            deckOfCards.winnerCollectsCards(player1, player2, this.status)    
+                            this.status = "normal"
+                        }               
+                        else {
+                            this.status = "war"
+                            deckOfCards.winnerCollectsCards(player1, player2, this.status) 
+                        }                               
+                            this.round = this.round + 1  
+                    } else {
+                        console.log("Oops! There are not enough cards to continue the game")
+                        console.log(player1.name + " has " + player1.deck.length + " cards left and " + player2.name + " has " + player2.deck.length + " cards left!")
+                        if(player1.deck.length > player2.deck.length) {
+                            console.log(player1.name + " won the Game of War!")   
+                        } else {
+                            console.log(player2.name + " won the Game of War!")  
+                        }
+                        this.status = "GAME OVER"
+                    }  
+                    
             } 
 
             while(this.status === "war"){
                 
-                deckOfCards.drawCards(4,player1, player2, this.round)
-                deckOfCards.flipCards(player1, player2)
-
-                if(deckOfCards.compareCards(player1, player2)){
-                    deckOfCards.winnerCollectsCards(player1, player2, this.status) 
-                    this.status = "normal"  
-                }               
-                else {
-                    this.status = "war"
-                    deckOfCards.winnerCollectsCards(player1, player2, this.status) 
-                    
-                }       
-            
-                this.round = this.round + 1
+                if(player1.deck.length >= 4 && player2.deck.length >=4) {
+                    deckOfCards.drawCards(4,player1, player2, this.round)
+                    deckOfCards.flipCards(player1, player2)
+                    if(deckOfCards.compareCards(player1, player2)){
+                        deckOfCards.winnerCollectsCards(player1, player2, this.status) 
+                        this.status = "normal"  
+                    }               
+                    else {
+                        this.status = "war"
+                        deckOfCards.winnerCollectsCards(player1, player2, this.status) 
+                        
+                    }       
+                    this.round = this.round + 1
+                } else {
+                    console.log("Oops! There are not enough cards to continue the game")
+                    console.log(player1.name + " has " + player1.deck.length + " cards left and " + player2.name + " has " + player2.deck.length + " cards left!")
+                    if(player1.deck.length > player2.deck.length) {
+                        console.log(player1.name + " has won the Game of War!")   
+                    } else {
+                        console.log(player2.name + " has won the Game of War!")  
+                    }
+                    this.status = "GAME OVER"
+                }    
             }
 
 
         }   
+
+       
     }
 
     }
@@ -296,4 +277,5 @@ class Game {
 
 Game = new Game()
 Game.play()
+console.log("THIS GAME IS OVER!")
 
